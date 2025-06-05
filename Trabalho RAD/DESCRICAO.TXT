@@ -1,8 +1,5 @@
-FINALMENTE ESTAMOS COM O CRUD FEITO 
+Funcionamento do Trabalho 
 
-1- FALTA FAZER VALIDAÇÃO
-2- ESTILIZAÇÃO(OPCIONAL)
-3- AJUSTAR LOG (EXCLUIR SOME COM O NOME DO USUARIO)
-4- AJUSTAR TRASIÇÃO DE PÁGINA
-5- Botao de voltar
-6-
+Trabalho consiste em uma carteirinha para um clube da vizinhança onde o usuario tem acesso a esta carteirinha e pode tanto excluir a sua propria conta como alterar suas informações
+
+Temos o adm onde tem o controle de poder criar usuarios novos e alterar e excluir suas informações e tem o poder de ver os registros de utilização do programa
