@@ -467,4 +467,3 @@ class BancoDeDados:
             self.conn.close()
             self.conn = None
             print("Conexão com o banco de dados fechada.")
-
