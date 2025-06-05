@@ -1,10 +1,18 @@
-Trabalho de Desenvolvimento Rapido em Python
+Trabalho de Desenvolvimento Rápido em Python
 
 Integrantes
 
-* Paulo Marcos
-* Maria Eduarda
-* Micael Pessoa
-* Rafael Almeida
+Paulo Marcos
 
-Trabalho sobre a criação de um Clube da Vizinhança onde trabalhamos com o login e cadastro de usuarios e o CRUD por traz desses dados 
+Maria Eduarda
+
+Micael Pessoa
+
+Rafael Almeida
+
+O projeto consiste na criação de um sistema para um Clube da Vizinhança com login, cadastro e gerenciamento de usuários usando Python, Tkinter e SQLite. O foco está em permitir que moradores se cadastrem, editem seus dados e tenham controle total sobre suas informações. O sistema conta com uma interface simples, segura e funcional. As operações CRUD garantem flexibilidade e autonomia ao usuário.
+
+O sistema inicia pelo arquivo interface.py, que exibe a tela de login com opção de cadastro. Após o login, o usuário acessa uma tela onde seus dados são mostrados em formato de cartão, podendo editá-los ou excluir sua conta. As alterações são aplicadas diretamente no banco de dados. Toda a navegação foi pensada para ser intuitiva e segura para o usuário final.
+
+Administradores têm acesso a uma área exclusiva onde podem visualizar, editar e excluir contas de usuários e outros administradores. Também podem cadastrar novos admins. Todas as ações feitas por administradores são registradas em um sistema de logs, permitindo rastrear alterações e garantir transparência. Isso assegura maior controle sobre o sistema e sua integridade.
+
