@@ -1,5 +1,0 @@
-Funcionamento do Trabalho 
-
-Trabalho consiste em uma carteirinha para um clube da vizinhança onde o usuario tem acesso a esta carteirinha e pode tanto excluir a sua propria conta como alterar suas informações
-
-Temos o adm onde tem o controle de poder criar usuarios novos e alterar e excluir suas informações e tem o poder de ver os registros de utilização do programa
