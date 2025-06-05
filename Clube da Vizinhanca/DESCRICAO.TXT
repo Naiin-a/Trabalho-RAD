@@ -1,8 +1,2 @@
-FINALMENTE ESTAMOS COM O CRUD FEITO 
-
-1- FALTA FAZER VALIDAÇÃO
-2- ESTILIZAÇÃO(OPCIONAL)
-3- AJUSTAR LOG (EXCLUIR SOME COM O NOME DO USUARIO)
-4- AJUSTAR TRASIÇÃO DE PÁGINA
-5- Botao de voltar
-6-
+Terminado todo o processo de back-end
+Concluindo a parte de front-end para entrega do trabalho.
