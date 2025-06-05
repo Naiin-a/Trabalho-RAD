@@ -1,14 +1,15 @@
 Trabalho de Desenvolvimento Rápido em Python
 
-Integrantes
+Integrantes:
 
-Paulo Marcos
+Paulo Marcos 202403317761
 
-Maria Eduarda
+Maria Eduarda 202404213366
 
-Micael Pessoa
+Micael Pessoa 202403318172
 
-Rafael Almeida: 202403504073
+Rafael Almeida 202403504073
+
 
 O projeto consiste na criação de um sistema para um Clube da Vizinhança com login, cadastro e gerenciamento de usuários usando Python, Tkinter e SQLite. O foco está em permitir que moradores se cadastrem, editem seus dados e tenham controle total sobre suas informações. O sistema conta com uma interface simples, segura e funcional. As operações CRUD garantem flexibilidade e autonomia ao usuário.
 
