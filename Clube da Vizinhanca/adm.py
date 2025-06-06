@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from bd import BancoDeDados
-from cadastro import Cadastro_adm, Cadastro
+from cadastro import CadastroAdm, Cadastro
 from datetime import datetime
 import os
 import platform
@@ -9,7 +9,7 @@ import subprocess
 import sqlite3
 from validacao import validar_nome, validar_email, validar_senha, validar_login, validar_cpf, validar_3dig
 
-# Iniciar banco de dados
+
 bd = BancoDeDados()
 
 
@@ -20,7 +20,7 @@ def mostrar_usuarios(root, cpf_adm_executor):
         if not bd.conectar():
             messagebox.showerror("Erro Crítico", "Não foi possível conectar ao banco de dados.")
             return
-        bd.criar_tabelas()  # Ensure tables exist after connecting
+        bd.criar_tabelas()
 
     if bd.conn:
         try:
@@ -28,7 +28,7 @@ def mostrar_usuarios(root, cpf_adm_executor):
             cursor.execute("SELECT nome, cpf, bloco, numero_ap, email, data_cadastro FROM Pessoa")
             usuarios = cursor.fetchall()
 
-            # Limpa a janela atual
+
             for widget in root.winfo_children():
                 widget.destroy()
                 from interface import set_root
@@ -39,10 +39,9 @@ def mostrar_usuarios(root, cpf_adm_executor):
             janela_usuarios.geometry("700x580+300+1")
             janela_usuarios.configure(bg="#000F1A")
 
-            tk.Label(janela_usuarios, text="Gerenciar Usuários", font=("Helvetica", 14, "bold")
-                     , bg="#000F1A", fg="white").pack(pady=10)
+            tk.Label(janela_usuarios, text="Gerenciar Usuários", font=("Helvetica", 14, "bold"), bg="#000F1A", fg="white").pack(pady=10)
 
-            # Frame para a lista
+
             list_frame = tk.Frame(janela_usuarios, bg="#000F1A")
             list_frame.pack(fill="both", expand=True, padx=10, pady=5)
 
@@ -52,7 +51,7 @@ def mostrar_usuarios(root, cpf_adm_executor):
 
             scrollable_frame.bind(
                 "<Configure>",
-                lambda e: canvas.configure(
+                lambda a: canvas.configure(
                     scrollregion=canvas.bbox("all")
                 )
             )
@@ -72,55 +71,54 @@ def mostrar_usuarios(root, cpf_adm_executor):
                     tk.Label(user_frame, text=info, anchor="w", bg="#AAAAAA").pack(side="left", padx=5)
 
                     tk.Button(user_frame, text="Excluir",
-                              command=lambda c=cpf_usuario, adm_exec=cpf_adm_executor: excluir_usuario(root, adm_exec,
-                                                                                                       c),
+                              command=lambda c=cpf_usuario, adm_exec=cpf_adm_executor: excluir_usuario(root, adm_exec,c),
                               fg="dark red", bg="light gray").pack(side="right", padx=2, pady=3)
+
                     tk.Button(user_frame, text="Editar",
-                              command=lambda c=cpf_usuario, adm_exec=cpf_adm_executor: editar_usuario(root, adm_exec,
-                                                                                                      c),
+                              command=lambda c=cpf_usuario, adm_exec=cpf_adm_executor: editar_usuario(root, adm_exec,c),
                               fg="dark green", bg="light gray").pack(side="right", padx=2, pady=3)
 
             canvas.pack(side="left", fill="both", expand=True)
             scrollbar.pack(side="right", fill="y")
 
-            # Botões de ação do ADM
+
             action_frame = tk.Frame(janela_usuarios, bg="#000F1A")
             action_frame.pack(pady=10)
             tk.Button(action_frame, text="Cadastrar Novo Usuário",
                       command=lambda adm_exec=cpf_adm_executor: abrir_cadastro(root, adm_exec),
                       font=("Arial", 9, "bold"),
-                      bg="#001F3F",  # Fundo azul escuro
-                      fg="white",  # Texto branco
-                      activebackground="#003366",  # Fundo ao clicar
-                      activeforeground="white",  # Texto ao clicar
+                      bg="#001F3F",
+                      fg="white",
+                      activebackground="#003366",
+                      activeforeground="white",
                       relief="raised",
-
                       height=1,
                       pady=4, padx=4, cursor="hand2"
                       ).pack(side="left", padx=5)
+
             tk.Button(action_frame, text="Cadastrar Novo ADM",
                       command=lambda adm_exec=cpf_adm_executor: abrir_cadastro_adm(root, adm_exec),
                       font=("Arial", 9, "bold"),
-                      bg="#001F3F",  # Fundo azul escuro
-                      fg="white",  # Texto branco
-                      activebackground="#003366",  # Fundo ao clicar
-                      activeforeground="white",  # Texto ao clicar
+                      bg="#001F3F",
+                      fg="white",
+                      activebackground="#003366",
+                      activeforeground="white",
                       relief="raised",
-
                       height=1,
                       pady=4, padx=4, cursor="hand2"
                       ).pack(side="left", padx=5)
+
             tk.Button(action_frame, text="Mostrar Logs", command=exportar_logs_para_txt,
                       font=("Arial", 9, "bold"),
-                      bg="#001F3F",  # Fundo azul escuro
-                      fg="white",  # Texto branco
-                      activebackground="#003366",  # Fundo ao clicar
-                      activeforeground="white",  # Texto ao clicar
+                      bg="#001F3F",
+                      fg="white",
+                      activebackground="#003366",
+                      activeforeground="white",
                       relief="raised",
-
                       height=1,
                       pady=4, padx=4, cursor="hand2"
                       ).pack(side="left", padx=5)
+
             tk.Button(action_frame, text="Gerenciar Administradores",
                       command=lambda adm_exec=cpf_adm_executor: mostrar_adms(root, adm_exec),
                       font=("Arial", 9, "bold"),
@@ -129,19 +127,18 @@ def mostrar_usuarios(root, cpf_adm_executor):
                       activebackground="#003366",  # Fundo ao clicar
                       activeforeground="white",  # Texto ao clicar
                       relief="raised",
-
                       height=1,
                       pady=4, padx=4, cursor="hand2"
                       ).pack(side="left", padx=5)
-
+            from interface import reiniciar_para_login
             try:
-                from interface import reiniciar_para_login
+
                 tk.Button(janela_usuarios, text="Logout", command=reiniciar_para_login,
                           font=("Arial", 9, "bold"),
-                          bg="#001F3F",  # Fundo azul escuro
-                          fg="white",  # Texto branco
-                          activebackground="#003366",  # Fundo ao clicar
-                          activeforeground="white",  # Texto ao clicar
+                          bg="#001F3F",
+                          fg="white",
+                          activebackground="#003366",
+                          activeforeground="white",
                           relief="raised",
                           width=10,
                           height=1,
@@ -167,7 +164,7 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
                        (str(cpf_usuario_alvo),))
         usuario = cursor.fetchone()
     except Exception as e:
-        messagebox.showerror("Erro", f"Erro ao buscar dados do usuário: {e}");
+        messagebox.showerror("Erro", f"Erro ao buscar dados do usuário: {e}")
         return
 
     if not usuario: messagebox.showerror("Erro", "Usuário não encontrado."); return
@@ -180,12 +177,12 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
     janela_editar.transient(root)
     janela_editar.grab_set()
 
-    tk.Label(janela_editar, text="Nome*", bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+    tk.Label(janela_editar, text="Nome*", bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
-             pady=4, padx=1).pack();
+             pady=4, padx=1).pack()
     entry_nome = tk.Entry(janela_editar,
                           fg="black",
                           relief="flat",
@@ -193,18 +190,18 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
                           highlightcolor="#00ADB5",
                           highlightthickness=2,
                           insertbackground="black", justify="center"
-                          );
-    entry_nome.insert(0, nome_atual);
+                          )
+    entry_nome.insert(0, nome_atual)
     entry_nome.pack()
 
     tk.Label(janela_editar, text="Email*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_email = tk.Entry(janela_editar,
                            fg="black",
                            relief="flat",
@@ -212,18 +209,18 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
                            highlightcolor="#00ADB5",
                            highlightthickness=2,
                            insertbackground="black", justify="center"
-                           );
-    entry_email.insert(0, email_atual);
+                           )
+    entry_email.insert(0, email_atual)
     entry_email.pack()
 
     tk.Label(janela_editar, text="Bloco",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_bloco = tk.Entry(janela_editar,
                            fg="black",
                            relief="flat",
@@ -231,18 +228,18 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
                            highlightcolor="#00ADB5",
                            highlightthickness=2,
                            insertbackground="black", justify="center"
-                           );
-    entry_bloco.insert(0, str(bloco_atual) if bloco_atual is not None else "");
+                           )
+    entry_bloco.insert(0, str(bloco_atual) if bloco_atual is not None else "")
     entry_bloco.pack()
 
     tk.Label(janela_editar, text="Número do AP",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=27,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_numero_ap = tk.Entry(janela_editar,
                                fg="black",
                                relief="flat",
@@ -250,18 +247,18 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
-    entry_numero_ap.insert(0, str(numero_ap_atual) if numero_ap_atual is not None else "");
+                               )
+    entry_numero_ap.insert(0, str(numero_ap_atual) if numero_ap_atual is not None else "")
     entry_numero_ap.pack()
 
     tk.Label(janela_editar, text="Login*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_login = tk.Entry(janela_editar,
                            fg="black",
                            relief="flat",
@@ -269,23 +266,23 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
                            highlightcolor="#00ADB5",
                            highlightthickness=2,
                            insertbackground="black", justify="center"
-                           );
-    entry_login.insert(0, login_atual);
+                           )
+    entry_login.insert(0, login_atual)
     entry_login.pack()
     tk.Label(janela_editar, text="Nova Senha (deixe em branco para não alterar)",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=37,
              height=1,
              pady=4, padx=1
-             ).pack();
-    entry_senha = tk.Entry(janela_editar, show=">");
+             ).pack()
+    entry_senha = tk.Entry(janela_editar, show=">")
     entry_senha.pack()
     tk.Label(janela_editar, text="* Campos obrigatórios",
              font=("Arial", 6, "bold"),
-             bg="#001F3F",  # Fundo azul escuro
-             fg="white",  # Texto branco
+             bg="#001F3F",
+             fg="white",
              relief="raised",
              width=16,
              height=1,
@@ -293,52 +290,51 @@ def editar_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
              ).pack(pady=5)
 
     def salvar():
-        novo_nome = entry_nome.get();
+        novo_nome = entry_nome.get()
         novo_email = entry_email.get()
-        novo_bloco_str = entry_bloco.get();
+        novo_bloco_str = entry_bloco.get()
         novo_numero_ap_str = entry_numero_ap.get()
-        novo_login = entry_login.get();
+        novo_login = entry_login.get()
         nova_senha = entry_senha.get()
         if not novo_nome or not novo_email or not novo_login:
             messagebox.showwarning("Campos Obrigatórios", "Nome, Email e Login são obrigatórios.",
-                                   parent=janela_editar);
+                                   parent=janela_editar)
             return
         try:
             novo_bloco = int(novo_bloco_str) if novo_bloco_str else None
             novo_numero_ap = int(novo_numero_ap_str) if novo_numero_ap_str else None
         except ValueError:
-            messagebox.showerror("Erro de Formato", "Bloco e AP devem ser números.", parent=janela_editar);
+            messagebox.showerror("Erro de Formato", "Bloco e AP devem ser números.", parent=janela_editar)
             return
 
         if messagebox.askyesno("Confirmar Alterações", "Salvar mudanças para este usuário?", parent=janela_editar):
             try:
-                # bd.atualizar_pessoa agora levanta exceção em caso de erro de log
+
                 bd.atualizar_pessoa(cpf=str(cpf_usuario_alvo), cpf_adm=cpf_adm_executor,
                                     novo_nome=novo_nome, novo_email=novo_email, novo_login=novo_login,
                                     novo_bloco=novo_bloco, novo_numero_ap=novo_numero_ap,
                                     novo_senha=nova_senha if nova_senha else None)
-                # Se chegou aqui, foi sucesso
+
                 messagebox.showinfo("Sucesso", "Usuário atualizado!", parent=janela_editar)
                 janela_editar.destroy()
                 mostrar_usuarios(root, cpf_adm_executor)
 
-            except ValueError as ve:  # Captura erros de validação (ex: UNIQUE constraint)
+            except ValueError as ve:
                 messagebox.showerror("Erro de Validação", str(ve), parent=janela_editar)
-            except sqlite3.Error as db_err:  # Captura erros do banco (ex: falha no log)
+            except sqlite3.Error as db_err:
                 print(f"[ADM ERROR] Erro SQLite em editar_usuario (salvar): {db_err}")
                 messagebox.showerror("Erro de Banco", f"Erro ao atualizar usuário: {db_err}", parent=janela_editar)
-            except Exception as e:  # Captura outros erros
-                messagebox.showerror("Erro Inesperado", f"Erro inesperado ao atualizar usuário: {e}",
+            except Exception as t:
+                messagebox.showerror("Erro Inesperado", f"Erro inesperado ao atualizar usuário: {t}",
                                      parent=janela_editar)
 
     tk.Button(janela_editar, text="Salvar Alterações", command=salvar,
               font=("Arial", 9, "bold"),
-              bg="#001F3F",  # Fundo azul escuro
-              fg="white",  # Texto branco
-              activebackground="#003366",  # Fundo ao clicar
-              activeforeground="white",  # Texto ao clicar
+              bg="#001F3F",
+              fg="white",
+              activebackground="#003366",
+              activeforeground="white",
               relief="raised",
-
               height=1,
               pady=4, padx=4, cursor="hand2"
               ).pack(pady=20)
@@ -351,38 +347,38 @@ def excluir_usuario(root, cpf_adm_executor, cpf_usuario_alvo):
         if not bd.conn:
             if not bd.conectar(): messagebox.showerror("Erro", "Sem conexão com banco."); return
         try:
-            # Chama bd.deletar_pessoa. Se não houver erro, foi sucesso.
-            bd.deletar_pessoa(cpf=str(cpf_usuario_alvo), cpf_adm=cpf_adm_executor)
-            # Se chegou aqui sem erro, a exclusão foi bem-sucedida
-            messagebox.showinfo("Sucesso", f"Usuário CPF {cpf_usuario_alvo} excluído.")
-            mostrar_usuarios(root, cpf_adm_executor)  # Atualiza a lista
 
-        except sqlite3.Error as db_err:  # Captura erros específicos do banco
+            bd.deletar_pessoa(cpf=str(cpf_usuario_alvo), cpf_adm=cpf_adm_executor)
+
+            messagebox.showinfo("Sucesso", f"Usuário CPF {cpf_usuario_alvo} excluído.")
+            mostrar_usuarios(root, cpf_adm_executor)
+
+        except sqlite3.Error as db_err:
             print(f"[ADM ERROR] Erro SQLite em excluir_usuario: {db_err}")
             messagebox.showerror("Erro de Banco",
                                  f"Erro ao tentar excluir usuário: {db_err}. Verifique se o ADM executor ({cpf_adm_executor}) existe e é válido.")
-        except Exception as e:  # Captura outros erros inesperados
+        except Exception as e:
             print(f"[ADM ERROR] Exceção inesperada em excluir_usuario: {e}")
             messagebox.showerror("Erro Inesperado", f"Erro inesperado na exclusão: {e}")
 
 
 def abrir_cadastro(root, cpf_adm_executor):
     print(f"[ADM DEBUG] Abrindo cadastro de usuário pelo ADM CPF: {cpf_adm_executor}")
-    cadastro_window = tk.Toplevel(root);
-    cadastro_window.title("Cadastrar Usuário");
+    cadastro_window = tk.Toplevel(root)
+    cadastro_window.title("Cadastrar Usuário")
     cadastro_window.geometry("350x450+500+100")
-    cadastro_window.transient(root);
+    cadastro_window.transient(root)
     cadastro_window.grab_set()
     cadastro_window.configure(bg="#000F1A")
 
     tk.Label(cadastro_window, text="CPF*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_cpf = tk.Entry(cadastro_window,
                          fg="black",
                          relief="flat",
@@ -390,17 +386,17 @@ def abrir_cadastro(root, cpf_adm_executor):
                          highlightcolor="#00ADB5",
                          highlightthickness=2,
                          insertbackground="black", justify="center"
-                         );
+                         )
     entry_cpf.pack()
 
     tk.Label(cadastro_window, text="Login*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_login_cad = tk.Entry(cadastro_window,
                                fg="black",
                                relief="flat",
@@ -408,17 +404,17 @@ def abrir_cadastro(root, cpf_adm_executor):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
+                               )
     entry_login_cad.pack()
 
     tk.Label(cadastro_window, text="Nome*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_nome = tk.Entry(cadastro_window,
                           fg="black",
                           relief="flat",
@@ -426,17 +422,17 @@ def abrir_cadastro(root, cpf_adm_executor):
                           highlightcolor="#00ADB5",
                           highlightthickness=2,
                           insertbackground="black", justify="center"
-                          );
+                          )
     entry_nome.pack()
 
     tk.Label(cadastro_window, text="Senha*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_senha_cad = tk.Entry(cadastro_window, show=">",
                                fg="black",
                                relief="flat",
@@ -444,17 +440,17 @@ def abrir_cadastro(root, cpf_adm_executor):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
+                               )
     entry_senha_cad.pack()
 
     tk.Label(cadastro_window, text="Bloco",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_bloco = tk.Entry(cadastro_window,
                            fg="black",
                            relief="flat",
@@ -462,17 +458,17 @@ def abrir_cadastro(root, cpf_adm_executor):
                            highlightcolor="#00ADB5",
                            highlightthickness=2,
                            insertbackground="black", justify="center"
-                           );
+                           )
     entry_bloco.pack()
 
     tk.Label(cadastro_window, text="Número do AP",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=27,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_numero_ap = tk.Entry(cadastro_window,
                                fg="black",
                                relief="flat",
@@ -480,17 +476,17 @@ def abrir_cadastro(root, cpf_adm_executor):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
+                               )
     entry_numero_ap.pack()
 
     tk.Label(cadastro_window, text="Email*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_email = tk.Entry(cadastro_window,
                            fg="black",
                            relief="flat",
@@ -498,12 +494,12 @@ def abrir_cadastro(root, cpf_adm_executor):
                            highlightcolor="#00ADB5",
                            highlightthickness=2,
                            insertbackground="black", justify="center"
-                           );
+                           )
     entry_email.pack()
     tk.Label(cadastro_window, text="* Campos obrigatórios",
              font=("Arial", 6, "bold"),
-             bg="#001F3F",  # Fundo azul escuro
-             fg="white",  # Texto branco
+             bg="#001F3F",
+             fg="white",
              relief="raised",
              width=16,
              height=1,
@@ -568,10 +564,10 @@ def abrir_cadastro(root, cpf_adm_executor):
 
     tk.Button(cadastro_window, text="Cadastrar Usuário", command=cadastrar_pessoa,
               font=("Arial", 9, "bold"),
-              bg="#001F3F",  # Fundo azul escuro
-              fg="white",  # Texto branco
-              activebackground="#003366",  # Fundo ao clicar
-              activeforeground="white",  # Texto ao clicar
+              bg="#001F3F",
+              fg="white",
+              activebackground="#003366",
+              activeforeground="white",
               relief="raised",
 
               height=1,
@@ -603,9 +599,8 @@ def mostrar_adms(root, cpf_adm_executor):
             janela_adms.configure(bg="#000F1A")
 
             tk.Label(janela_adms, text="Gerenciar Administradores", font=("Helvetica", 14, "bold"),
-                     bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-                     fg="white",  # Texto branco para contraste
-
+                     bg="#000F1A",
+                     fg="white"
                      ).pack(pady=10)
 
             list_frame = tk.Frame(janela_adms, bg="#000F1A")
@@ -613,7 +608,7 @@ def mostrar_adms(root, cpf_adm_executor):
             canvas = tk.Canvas(list_frame)
             scrollbar = tk.Scrollbar(list_frame, orient="vertical", command=canvas.yview)
             scrollable_frame = tk.Frame(canvas)
-            scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+            scrollable_frame.bind("<Configure>", lambda a: canvas.configure(scrollregion=canvas.bbox("all")))
             canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
             canvas.configure(yscrollcommand=scrollbar.set)
 
@@ -629,10 +624,11 @@ def mostrar_adms(root, cpf_adm_executor):
                     tk.Label(adm_frame, text=info, anchor="w", bg="#AAAAAA").pack(side="left", padx=5)
                     if cpf_adm_alvo != cpf_adm_executor:
                         tk.Button(adm_frame, text="Excluir",
-                                  command=lambda c=cpf_adm_alvo, exec=cpf_adm_executor: excluir_adm(root, exec, c),
+                                  command=lambda c=cpf_adm_alvo, execu=cpf_adm_executor: excluir_adm(root, execu, c),
                                   fg="dark red", bg="light gray").pack(side="right", padx=2)
+
                         tk.Button(adm_frame, text="Editar",
-                                  command=lambda c=cpf_adm_alvo, exec=cpf_adm_executor: editar_adm(root, exec, c),
+                                  command=lambda c=cpf_adm_alvo, execu=cpf_adm_executor: editar_adm(root, execu, c),
                                   fg="dark green", bg="light gray").pack(side="right", padx=2)
                     else:
                         tk.Label(adm_frame, text="(Você)", bg="#AAAAAA", fg="purple").pack(side="right", padx=5)
@@ -645,36 +641,35 @@ def mostrar_adms(root, cpf_adm_executor):
             tk.Button(action_frame, text="Cadastrar Novo ADM",
                       command=lambda adm_exec=cpf_adm_executor: abrir_cadastro_adm(root, adm_exec),
                       font=("Arial", 9, "bold"),
-                      bg="#001F3F",  # Fundo azul escuro
-                      fg="white",  # Texto branco
-                      activebackground="#003366",  # Fundo ao clicar
-                      activeforeground="white",  # Texto ao clicar
+                      bg="#001F3F",
+                      fg="white",
+                      activebackground="#003366",
+                      activeforeground="white",
                       relief="raised",
-
                       height=1,
                       pady=4, padx=4, cursor="hand2"
                       ).pack(side="left", padx=5)
+
             tk.Button(action_frame, text="Gerenciar Usuários",
                       command=lambda adm_exec=cpf_adm_executor: mostrar_usuarios(root, adm_exec),
                       font=("Arial", 9, "bold"),
-                      bg="#001F3F",  # Fundo azul escuro
-                      fg="white",  # Texto branco
-                      activebackground="#003366",  # Fundo ao clicar
-                      activeforeground="white",  # Texto ao clicar
+                      bg="#001F3F",
+                      fg="white",
+                      activebackground="#003366",
+                      activeforeground="white",
                       relief="raised",
-
                       height=1,
                       pady=4, padx=4, cursor="hand2"
                       ).pack(side="left", padx=5)
-
+            from interface import reiniciar_para_login
             try:
-                from interface import reiniciar_para_login
+
                 tk.Button(janela_adms, text="Logout", command=reiniciar_para_login,
                           font=("Arial", 9, "bold"),
-                          bg="#001F3F",  # Fundo azul escuro
-                          fg="white",  # Texto branco
-                          activebackground="#003366",  # Fundo ao clicar
-                          activeforeground="white",  # Texto ao clicar
+                          bg="#001F3F",
+                          fg="white",
+                          activebackground="#003366",
+                          activeforeground="white",
                           relief="raised",
                           width=10,
                           height=1,
@@ -701,11 +696,11 @@ def editar_adm(root, cpf_adm_executor, cpf_adm_alvo):
             cursor.execute("SELECT nome, login FROM Adm WHERE cpf = ?", (str(cpf_adm_alvo),))
             adm_atual = cursor.fetchone()
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao buscar dados do ADM: {e}");
+            messagebox.showerror("Erro", f"Erro ao buscar dados do ADM: {e}")
             return
 
         if not adm_atual:
-            messagebox.showerror("Erro", "Administrador não encontrado.");
+            messagebox.showerror("Erro", "Administrador não encontrado.")
             return
 
         nome_atual, login_atual = adm_atual
@@ -718,13 +713,13 @@ def editar_adm(root, cpf_adm_executor, cpf_adm_alvo):
         janela_editar.grab_set()
 
         tk.Label(janela_editar, text="Nome*",
-                 bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-                 fg="light gray",  # Texto branco para contraste
+                 bg="#000F1A",
+                 fg="light gray",
                  font=("Helvetica", 9, "bold"),
                  width=7,
                  height=1,
                  pady=4, padx=1
-                 ).pack();
+                 ).pack()
         entry_nome = tk.Entry(janela_editar,
                               fg="black",
                               relief="flat",
@@ -732,18 +727,18 @@ def editar_adm(root, cpf_adm_executor, cpf_adm_alvo):
                               highlightcolor="#00ADB5",
                               highlightthickness=2,
                               insertbackground="black", justify="center"
-                              );
-        entry_nome.insert(0, nome_atual);
+                              )
+        entry_nome.insert(0, nome_atual)
         entry_nome.pack()
 
         tk.Label(janela_editar, text="Login*",
-                 bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-                 fg="light gray",  # Texto branco para contraste
+                 bg="#000F1A",
+                 fg="light gray",
                  font=("Helvetica", 9, "bold"),
                  width=7,
                  height=1,
                  pady=4, padx=1
-                 ).pack();
+                 ).pack()
         entry_login = tk.Entry(janela_editar,
                                fg="black",
                                relief="flat",
@@ -751,18 +746,17 @@ def editar_adm(root, cpf_adm_executor, cpf_adm_alvo):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
-        entry_login.insert(0, login_atual);
+                               )
+        entry_login.insert(0, login_atual)
         entry_login.pack()
 
         tk.Label(janela_editar, text="Nova Senha (deixe em branco para não alterar)",
-                 bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-                 fg="light gray",  # Texto branco para contraste
+                 bg="#000F1A",
+                 fg="light gray",
                  font=("Helvetica", 9, "bold"),
-
                  height=1,
                  pady=4, padx=1
-                 ).pack();
+                 ).pack()
         entry_senha = tk.Entry(janela_editar, show=">",
                                fg="black",
                                relief="flat",
@@ -770,12 +764,12 @@ def editar_adm(root, cpf_adm_executor, cpf_adm_alvo):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
+                               )
         entry_senha.pack()
         tk.Label(janela_editar, text="* Campos obrigatórios",
                  font=("Arial", 6, "bold"),
-                 bg="#001F3F",  # Fundo azul escuro
-                 fg="white",  # Texto branco
+                 bg="#001F3F",
+                 fg="white",
                  relief="raised",
                  width=16,
                  height=1,
@@ -787,13 +781,13 @@ def editar_adm(root, cpf_adm_executor, cpf_adm_alvo):
             novo_login = entry_login.get()
             nova_senha = entry_senha.get()
             if not novo_nome or not novo_login:
-                messagebox.showwarning("Campos Obrigatórios", "Nome e Login são obrigatórios.", parent=janela_editar);
+                messagebox.showwarning("Campos Obrigatórios", "Nome e Login são obrigatórios.", parent=janela_editar)
                 return
 
             if messagebox.askyesno("Confirmar Alterações", "Salvar mudanças para este administrador?",
                                    parent=janela_editar):
                 try:
-                    # A função bd.atualizar_adm ainda retorna True/False
+
                     success = bd.atualizar_adm(cpf_adm_executor=cpf_adm_executor,
                                                cpf_adm_alvo=str(cpf_adm_alvo),
                                                novo_nome=novo_nome,
@@ -804,22 +798,21 @@ def editar_adm(root, cpf_adm_executor, cpf_adm_alvo):
                         janela_editar.destroy()
                         mostrar_adms(root, cpf_adm_executor)
                     else:
-                        # Se bd.atualizar_adm retornar False
+
                         messagebox.showerror("Erro", "Falha ao atualizar administrador (não encontrado?).",
                                              parent=janela_editar)
-                except ValueError as ve:  # Captura erros de validação (ex: login duplicado)
+                except ValueError as ve:
                     messagebox.showerror("Erro de Validação", str(ve), parent=janela_editar)
-                except Exception as e:  # Captura outros erros inesperados
-                    messagebox.showerror("Erro Inesperado", f"Erro ao atualizar ADM: {e}", parent=janela_editar)
+                except Exception as v:
+                    messagebox.showerror("Erro Inesperado", f"Erro ao atualizar ADM: {v}", parent=janela_editar)
 
         tk.Button(janela_editar, text="Salvar Alterações", command=salvar_adm,
                   font=("Arial", 9, "bold"),
-                  bg="#001F3F",  # Fundo azul escuro
-                  fg="white",  # Texto branco
-                  activebackground="#003366",  # Fundo ao clicar
-                  activeforeground="white",  # Texto ao clicar
+                  bg="#001F3F",
+                  fg="white",
+                  activebackground="#003366",
+                  activeforeground="white",
                   relief="raised",
-
                   height=1,
                   pady=4, padx=4, cursor="hand2"
                   ).pack(pady=20)
@@ -829,25 +822,25 @@ def excluir_adm(root, cpf_adm_executor, cpf_adm_alvo):
     """Exclui um administrador."""
     print(f"[ADM DEBUG] Iniciando exclusão do ADM CPF {cpf_adm_alvo} pelo ADM CPF {cpf_adm_executor}")
     if cpf_adm_executor == cpf_adm_alvo:
-        messagebox.showerror("Erro", "Você não pode excluir sua própria conta.");
+        messagebox.showerror("Erro", "Você não pode excluir sua própria conta.")
         return
 
     if messagebox.askyesno("Confirmar Exclusão", f"Excluir o administrador CPF {cpf_adm_alvo}?", icon='warning'):
         if not bd.conn:
             if not bd.conectar(): messagebox.showerror("Erro", "Sem conexão com banco."); return
         try:
-            # Chama bd.deletar_adm
-            bd.deletar_adm(cpf_adm_executor=cpf_adm_executor, cpf_adm_alvo=str(cpf_adm_alvo))
-            # Se chegou aqui sem erro, a exclusão foi bem-sucedida
-            messagebox.showinfo("Sucesso", f"Administrador CPF {cpf_adm_alvo} excluído.")
-            mostrar_adms(root, cpf_adm_executor)  # Atualiza a lista
 
-        except ValueError as ve:  # Captura erro de auto-exclusão (já verificado, mas por segurança)
+            bd.deletar_adm(cpf_adm_executor=cpf_adm_executor, cpf_adm_alvo=str(cpf_adm_alvo))
+
+            messagebox.showinfo("Sucesso", f"Administrador CPF {cpf_adm_alvo} excluído.")
+            mostrar_adms(root, cpf_adm_executor)
+
+        except ValueError as ve:
             messagebox.showerror("Erro de Validação", str(ve))
-        except sqlite3.Error as db_err:  # Captura erros específicos do banco
+        except sqlite3.Error as db_err:
             print(f"[ADM ERROR] Erro SQLite em excluir_adm: {db_err}")
             messagebox.showerror("Erro de Banco", f"Erro ao tentar excluir ADM: {db_err}")
-        except Exception as e:  # Captura outros erros inesperados
+        except Exception as e:
             print(f"[ADM ERROR] Exceção inesperada em excluir_adm: {e}")
             messagebox.showerror("Erro Inesperado", f"Erro inesperado na exclusão do ADM: {e}")
 
@@ -855,21 +848,21 @@ def excluir_adm(root, cpf_adm_executor, cpf_adm_alvo):
 def abrir_cadastro_adm(root, cpf_adm_executor):
     """Abre a janela para um ADM cadastrar outro ADM."""
     print(f"[ADM DEBUG] Abrindo cadastro de ADM pelo ADM CPF: {cpf_adm_executor}")
-    cadastro_window = tk.Toplevel(root);
-    cadastro_window.title("Cadastrar Administrador");
+    cadastro_window = tk.Toplevel(root)
+    cadastro_window.title("Cadastrar Administrador")
     cadastro_window.geometry("350x300+500+100")
-    cadastro_window.transient(root);
+    cadastro_window.transient(root)
     cadastro_window.grab_set()
     cadastro_window.configure(bg="#000F1A")
 
     tk.Label(cadastro_window, text="CPF*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_cpf = tk.Entry(cadastro_window,
                          fg="black",
                          relief="flat",
@@ -877,17 +870,17 @@ def abrir_cadastro_adm(root, cpf_adm_executor):
                          highlightcolor="#00ADB5",
                          highlightthickness=2,
                          insertbackground="black", justify="center"
-                         );
+                         )
     entry_cpf.pack()
 
     tk.Label(cadastro_window, text="Login*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_login_cad = tk.Entry(cadastro_window,
                                fg="black",
                                relief="flat",
@@ -895,17 +888,17 @@ def abrir_cadastro_adm(root, cpf_adm_executor):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
+                               )
     entry_login_cad.pack()
 
     tk.Label(cadastro_window, text="Nome*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_nome = tk.Entry(cadastro_window,
                           fg="black",
                           relief="flat",
@@ -913,17 +906,17 @@ def abrir_cadastro_adm(root, cpf_adm_executor):
                           highlightcolor="#00ADB5",
                           highlightthickness=2,
                           insertbackground="black", justify="center"
-                          );
+                          )
     entry_nome.pack()
 
     tk.Label(cadastro_window, text="Senha*",
-             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
-             fg="light gray",  # Texto branco para contraste
+             bg="#000F1A",
+             fg="light gray",
              font=("Helvetica", 9, "bold"),
              width=7,
              height=1,
              pady=4, padx=1
-             ).pack();
+             ).pack()
     entry_senha_cad = tk.Entry(cadastro_window, show=">",
                                fg="black",
                                relief="flat",
@@ -931,13 +924,13 @@ def abrir_cadastro_adm(root, cpf_adm_executor):
                                highlightcolor="#00ADB5",
                                highlightthickness=2,
                                insertbackground="black", justify="center"
-                               );
+                               )
     entry_senha_cad.pack()
 
     tk.Label(cadastro_window, text="* Campos obrigatórios",
              font=("Arial", 6, "bold"),
-             bg="#001F3F",  # Fundo azul escuro
-             fg="white",  # Texto branco
+             bg="#001F3F",
+             fg="white",
              relief="raised",
              width=16,
              height=1,
@@ -971,7 +964,7 @@ def abrir_cadastro_adm(root, cpf_adm_executor):
                 return
 
             cpf = int(cpf_str)
-            novo_adm = Cadastro_adm(
+            novo_adm = CadastroAdm(
                 cpf=cpf, login=login, nome=nome, senha=senha,
                 data_cadastro=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             )
@@ -988,12 +981,11 @@ def abrir_cadastro_adm(root, cpf_adm_executor):
 
     tk.Button(cadastro_window, text="Cadastrar ADM", command=cadastrar,
               font=("Arial", 9, "bold"),
-              bg="#001F3F",  # Fundo azul escuro
-              fg="white",  # Texto branco
-              activebackground="#003366",  # Fundo ao clicar
-              activeforeground="white",  # Texto ao clicar
+              bg="#001F3F",
+              fg="white",
+              activebackground="#003366",
+              activeforeground="white",
               relief="raised",
-
               height=1,
               pady=4, padx=4, cursor="hand2"
               ).pack(pady=10)
@@ -1003,7 +995,8 @@ def exportar_logs_para_txt():
     """Exporta os logs do banco para um arquivo de texto e o abre."""
     print("[ADM DEBUG] Iniciando exportação de logs.")
     if not bd.conn:
-        if not bd.conectar(): messagebox.showerror("Erro", "Sem conexão com banco."); return
+        if not bd.conectar(): messagebox.showerror("Erro", "Sem conexão com banco.")
+        return
     try:
         cursor = bd.conn.cursor()
         adms = {row[0]: row[1] for row in cursor.execute("SELECT cpf, nome FROM Adm").fetchall()}
@@ -1011,7 +1004,7 @@ def exportar_logs_para_txt():
         cursor.execute("SELECT id, cpf_adm, cpf_alvo, acao, data_hora FROM Log ORDER BY data_hora DESC")
         logs = cursor.fetchall()
         if not logs:
-            messagebox.showinfo("Logs", "Nenhum log encontrado.");
+            messagebox.showinfo("Logs", "Nenhum log encontrado.")
             return
         log_dir = os.path.join(os.path.dirname(__file__), "logs")
         os.makedirs(log_dir, exist_ok=True)
@@ -1028,9 +1021,9 @@ def exportar_logs_para_txt():
 
                     if "ADM" in acao:
                         target_display = "N/A (Ação do ADM)"
-                    elif cpf_adm_log is None:  # Ação do próprio usuário
+                    elif cpf_adm_log is None:
                         target_display = "Próprio Usuário"
-                    else:  # Outros casos
+                    else:
                         target_display = "N/A"
 
                 f.write(f"[{data_hora}] ID:{id_log} | Ação: {acao}\n")

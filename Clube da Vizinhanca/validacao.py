@@ -20,7 +20,8 @@ def validar_3dig(numero):
     try:
         numero = int(numero)
         return 1 <= numero <= 999
-    except:
+    except Exception as e:
+        print(f"Erro de validação: {e}")
         return False
 
 def validar_email(email):
@@ -28,5 +29,7 @@ def validar_email(email):
     return re.match(padrao, email) is not None
 
 def validar_cpf(cpf):
-    cpf = re.sub(r'\D', '', cpf)  # Remove não dígitos
-    return len(cpf) == 11  #verifica se tem 11 dígitos
+    cpf = re.sub(r'\D', '', cpf)
+    return len(cpf) == 11
+
+

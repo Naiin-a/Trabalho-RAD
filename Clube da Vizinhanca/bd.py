@@ -1,7 +1,7 @@
 import sqlite3
 import os
 from cadastro import Cadastro
-from cadastro import Cadastro_adm
+from cadastro import CadastroAdm
 from datetime import datetime
 
 class BancoDeDados:
@@ -84,7 +84,7 @@ class BancoDeDados:
             self.conn.rollback()
             if "UNIQUE constraint failed" in str(e):
                  raise ValueError(f"Erro: CPF ou Login ou Email já cadastrado ({e})")
-            raise # Re-raise a exceção para ser tratada na interface
+            raise
 
     def atualizar_pessoa(self, cpf, cpf_adm=None, novo_nome=None, novo_email=None, novo_login=None, novo_senha=None,
                          novo_bloco=None, novo_numero_ap=None):
@@ -140,23 +140,18 @@ class BancoDeDados:
         
         try:
             cursor = self.conn.cursor()
-            # Verifica se a pessoa existe antes de tentar deletar
             cursor.execute("SELECT nome FROM Pessoa WHERE cpf = ?", (cpf,))
             pessoa = cursor.fetchone()
             
             if pessoa:
-                # Tenta inserir o log ANTES de deletar
                 acao_log = "Usuário excluído por ADM" if cpf_adm else "Usuário excluiu própria conta"
                 print(f"[BD DEBUG] deletar_pessoa - Tentando inserir log ANTES da exclusão. ADM: {cpf_adm}, Alvo: {cpf}, Ação: {acao_log}")
                 log_id = self.inserir_log(cpf_adm, cpf, acao_log)
                 
                 if log_id is None:
-                    # Se o log falhar, não prossegue com a exclusão
                     print(f"[BD ERROR] Falha ao inserir log para {acao_log}. Exclusão cancelada.")
-                    # Não precisa de rollback aqui pois nada foi alterado ainda
                     raise sqlite3.Error(f"Falha ao registrar log de {acao_log}. Exclusão cancelada.")
-                
-                # Se o log foi inserido com sucesso, deleta a pessoa
+
                 print(f"[BD DEBUG] deletar_pessoa - Log ID {log_id} inserido. Prosseguindo com DELETE para CPF {cpf}.")
                 cursor.execute("DELETE FROM Pessoa WHERE cpf = ?", (cpf,))
                 
@@ -166,13 +161,13 @@ class BancoDeDados:
                     return True
                 else:
                     print(f"[BD ERROR] Erro INESPERADO ao deletar: Usuário com CPF {cpf} não encontrado APÓS inserção do log (rowcount=0).")
-                    self.conn.rollback() # Desfaz a inserção do log
+                    self.conn.rollback()
                     return False
             else:
                 print(f"Usuário com CPF {cpf} não encontrado para exclusão.")
                 return False
         except sqlite3.Error as e:
-            # Captura erros do log ou do delete
+
             print(f"[BD ERROR] Erro SQLite ao deletar pessoa (CPF: {cpf}): {e}")
             self.conn.rollback()
             raise
@@ -189,7 +184,6 @@ class BancoDeDados:
             print(f"Erro ao listar pessoas: {e}")
             return []
 
-    # --- Adm Methods --- 
     def cadastrar_adm(self):
         """Cria a tabela Adm se não existir."""
         if self.conn:
@@ -210,7 +204,7 @@ class BancoDeDados:
                 print(f"Erro ao criar tabela Adm: {e}")
                 raise
 
-    def inserir_adm(self, adm: Cadastro_adm):
+    def inserir_adm(self, adm: CadastroAdm):
         """Insere um novo administrador."""
         if not self.conn:
              print("Erro: Sem conexão com o banco para inserir ADM.")
@@ -267,6 +261,7 @@ class BancoDeDados:
             cursor.execute(sql, tuple(params))
             if cursor.rowcount > 0:
                 self.conn.commit()
+                print(f"Administrador: {cpf_adm_executor} atualizou o Adm abaixo")
                 print(f"Administrador (CPF: {cpf_adm_alvo}) atualizado com sucesso!")
                 return True
             else:
@@ -311,10 +306,10 @@ class BancoDeDados:
             self.conn.rollback()
             raise
 
-    # --- Login and Log Methods --- 
+
     @staticmethod
     def validar_login(login, senha):
-        # Esta função não precisa de self.conn, usa conexão própria e fecha
+
         conn = None
         try:
             db_path = os.path.join(os.path.dirname(__file__), "banco.sqlite")
@@ -325,14 +320,12 @@ class BancoDeDados:
             adm = cursor.fetchone()
             if adm:
                 print(f"Login ADM bem-sucedido para {login}")
-                return ("adm", adm[0], adm[1]) # Retorna (tipo, cpf, nome)
-            # Se não for ADM, verifica Pessoa
+                return "adm", adm[0], adm[1]
             cursor.execute("SELECT cpf, nome, bloco, numero_ap, email FROM Pessoa WHERE login = ? AND senha = ?", (login, senha))
             pessoa = cursor.fetchone()
             if pessoa:
                 print(f"Login Pessoa bem-sucedido para {login}")
-                return ("pessoa", pessoa[0], pessoa[1], pessoa[2], pessoa[3], pessoa[4]) # Retorna (tipo, cpf, nome, bloco, ap, email)
-            # Se não encontrou nenhum
+                return "pessoa", pessoa[0], pessoa[1], pessoa[2], pessoa[3], pessoa[4]
             print(f"Login ou senha inválidos para {login}.")
             return None
         except sqlite3.Error as e:
@@ -347,11 +340,9 @@ class BancoDeDados:
         if self.conn:
             try:
                 cursor = self.conn.cursor()
-                # Verifica se a tabela Log existe
                 cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='Log';")
                 table_exists = cursor.fetchone()
-                
-                # Define a estrutura desejada
+
                 create_table_sql = """
                     CREATE TABLE Log(
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -368,11 +359,7 @@ class BancoDeDados:
                     print("Tabela Log não existe. Criando...")
                     cursor.execute(create_table_sql)
                 else:
-                    # Se existe, verifica as FKs (SQLite não tem ALTER TABLE fácil para FKs)
-                    # A maneira mais segura é recriar se a estrutura não for a ideal
-                    # Mas isso pode ser complexo com dados existentes. 
-                    # Por ora, vamos assumir que a criação inicial ou a migração anterior
-                    # deixou a tabela correta com ON DELETE SET NULL.
+
                     print("Tabela Log já existe. Verificação de estrutura não implementada.")
                     
                 self.conn.commit()
@@ -393,7 +380,6 @@ class BancoDeDados:
             data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             cursor = self.conn.cursor()
 
-            # Verifica se cpf_adm existe SE ele for fornecido
             if cpf_adm is not None:
                 cursor.execute("SELECT 1 FROM Adm WHERE cpf = ?", (cpf_adm,))
                 if cursor.fetchone() is None:
@@ -401,7 +387,6 @@ class BancoDeDados:
                         f"[BD ERROR] Falha ao inserir log: CPF do ADM executor ({cpf_adm}) não encontrado na tabela Adm.")
                     raise sqlite3.IntegrityError(f"FOREIGN KEY constraint failed: ADM CPF {cpf_adm} não existe.")
 
-            # Preparar informações do alvo, se possível
             nome_alvo = None
             cpf_real = cpf_alvo
 
@@ -411,9 +396,8 @@ class BancoDeDados:
                 if resultado:
                     nome_alvo, cpf_real = resultado
                 else:
-                    nome_alvo = None  # Pessoa já foi excluída
+                    nome_alvo = None
 
-            # Formatar a descrição da ação de acordo
             if "excluído" in acao or "excluiu" in acao:
                 if nome_alvo:
                     acao += f"\n  Alvo: {nome_alvo} | CPF: {cpf_real}"
@@ -430,7 +414,6 @@ class BancoDeDados:
                 else:
                     acao += f"\n  Alvo: CPF: {cpf_real} (não encontrado)"
 
-            # Inserir no log
             cursor.execute(
                 "INSERT INTO Log (cpf_adm, cpf_alvo, acao, data_hora) VALUES (?, ?, ?, ?)",
                 (cpf_adm, cpf_alvo, acao, data_hora)
@@ -452,15 +435,17 @@ class BancoDeDados:
         if self.conn is None:
             raise Exception("Conexão com o banco de dados não estabelecida.")
         return self.conn.cursor()
+
+    @staticmethod
     def buscar_usuario_por_cpf(conn, cpf):
+        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
-        conn.row_factory = sqlite3.Row  # Permite acessar as colunas como um dicionário
         cursor.execute("SELECT id, nome, cpf FROM Pessoa WHERE cpf=?", (cpf,))
-        usuario = cursor.fetchone()  # Retorna a primeira linha como um dicionário
+        usuario = cursor.fetchone()
 
         if usuario:
-            return dict(usuario)  # Retorna os dados como um dicionário
-        return None  # Se não encontrar o usuário, retorna None
+            return dict(usuario)
+        return None
 
     def fechar_conexao(self):
         if self.conn:

@@ -27,7 +27,6 @@ def main():
         cursor = conn.cursor()
         print("Conectado ao banco para migração da tabela Log...")
 
-        # Adiciona as colunas necessárias
         sucesso1 = adicionar_coluna_se_nao_existir(cursor, "Log", "cpf_modificador", "TEXT")
         sucesso2 = adicionar_coluna_se_nao_existir(cursor, "Log", "nome_modificador", "TEXT")
         sucesso3 = adicionar_coluna_se_nao_existir(cursor, "Log", "cpf_modificado", "TEXT")

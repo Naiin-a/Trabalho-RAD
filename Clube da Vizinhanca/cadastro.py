@@ -11,7 +11,7 @@ class Cadastro:
         self.cpf = cpf
         self.login = login
         self.nome = nome
-        self.__senha = senha  # privado
+        self.__senha = senha
         self.bloco = bloco
         self.numero_ap = numero_ap
         self.email = email
@@ -24,7 +24,7 @@ class Cadastro:
         self.__senha = senha
 
 
-class Cadastro_adm:
+class CadastroAdm:
     nome = ""
     login = ""
     senha = ""
@@ -35,7 +35,7 @@ class Cadastro_adm:
         self.cpf = cpf
         self.login = login
         self.nome = nome
-        self.__senha = senha  # privado
+        self.__senha = senha
         self.data_cadastro = data_cadastro
 
     def get_senha(self):
