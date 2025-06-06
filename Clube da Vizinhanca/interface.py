@@ -176,7 +176,7 @@ def mostrar_dados_usuario(dados):
         pady=5, fill="x")
 
     # Botão Logout (agora neste frame também)
-    tk.Button(action_frame, text="Logout", command=reiniciar_para_login).pack(pady=5, fill="x")
+    tk.Button(action_frame, text="Logout", command=reiniciar_para_login).pack(pady=0.1, fill="x")
 
     # --- Frame Direito (Carteirinha) ---
     right_frame = tk.Frame(root, bg="#f0f8ff", padx=10, pady=10)
