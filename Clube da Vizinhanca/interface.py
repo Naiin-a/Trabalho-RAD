@@ -18,21 +18,90 @@ def set_root(referencia_root):
 
 def mostrar_tela_login():
     root.title("Sistema de Login")
-    root.configure(bg="gray")
-    root.geometry("300x300")
+    root.iconphoto(True, tk.PhotoImage(file="icone.png"))
+    root.configure(bg="#393E46")  # Um tom de cinza claro
+    root.geometry("300x400+500+100")
 
     for widget in root.winfo_children():
         widget.destroy()
 
     global entry_login, entry_senha
-    tk.Label(root, text="Login", bg="gray").pack()
-    entry_login = tk.Entry(root)
-    entry_login.pack()
-    tk.Label(root, text="Senha", bg="gray").pack()
-    entry_senha = tk.Entry(root, show="*")
-    entry_senha.pack()
-    tk.Button(root, text="Entrar", command=fazer_login).pack(pady=10)
-    tk.Button(root, text="Cadastrar", command=abrir_cadastro).pack()
+    frame = tk.Frame(root,
+                     bg="#001427",  # Cor de fundo
+                     bd=5,  # Espessura da borda
+                     relief="sunken",  # Estilo da borda: flat, raised, sunken, groove, ridge
+                     cursor="boat",  # Cursor do mouse ao passar por cima
+                     highlightbackground="black",  # Cor da borda de destaque (no Mac)
+                     highlightthickness=2  # Espessura da borda de destaque
+                     )
+    frame.pack(expand=True)
+
+    # Label Login centralizado
+    tk.Label(
+        frame,
+        text="Login",
+        bg="#001427",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 14, "bold"),  # Fonte moderna e compacta
+        padx=10,  # Espaço interno horizontal
+        pady=5  # Espaço interno vertical
+    ).pack(pady=(10, 5))  # Espaço externo acima e abaixo
+
+    # Campo de entrada de login
+    entry_login = tk.Entry(frame, justify="center",
+                           bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black"
+                           )
+    entry_login.pack(pady=5, padx= 20,ipady=2, ipadx=5)
+
+    # Label Senha centralizado
+    tk.Label(frame, text="Senha",
+        bg="#001427",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 14, "bold"),  # Fonte moderna e compacta
+        padx=10,  # Espaço interno horizontal
+        pady=5).pack(pady=10, padx=10)
+
+    # Campo de entrada de senha
+    entry_senha = tk.Entry(frame, show=">",justify="center",
+    bg = "light gray",
+    fg = "black",
+    relief = "flat",
+    highlightbackground = "#001427",
+    highlightcolor = "#00ADB5",
+    highlightthickness = 2,
+    insertbackground = "black"
+    )
+    entry_senha.pack(pady=10, padx= 20,ipady=2, ipadx=5, )
+
+    # Botão "Entrar"
+    tk.Button(frame, text="Entrar", command=fazer_login,
+              font=("Arial", 12, "bold"),
+              bg="#001F3F",  # Fundo azul escuro
+              fg="white",  # Texto branco
+              activebackground="#003366",  # Fundo ao clicar
+              activeforeground="white",  # Texto ao clicar
+              relief="raised",
+              width=10,
+              height=1,
+              pady=3, padx=3, cursor="hand2" ).pack(pady=10, padx=10)
+
+    # Botão "Cadastrar"
+    tk.Button(frame, text="Cadastrar", command=abrir_cadastro,
+               font=("Arial", 12, "bold"),
+                bg="#001F3F",               # Fundo azul escuro
+                fg="white",                 # Texto branco
+                activebackground="#003366",# Fundo ao clicar
+                activeforeground="white",  # Texto ao clicar
+                relief="raised",
+              width=10,
+              height=1,
+              pady=4, padx=4, cursor="hand2" ).pack(pady=10, padx=10)
 
 def fazer_login():
     global cpf_adm_logado_global
@@ -67,7 +136,8 @@ def fazer_login():
 def abrir_cadastro():
     cadastro_window = tk.Toplevel(root)
     cadastro_window.title("Cadastro de Usuário")
-    cadastro_window.geometry("350x450")
+    cadastro_window.configure(bg="#000F1A")
+    cadastro_window.geometry("350x450+500+100")
     cadastro_window.transient(root)
     cadastro_window.grab_set()
 
@@ -125,15 +195,127 @@ def abrir_cadastro():
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao cadastrar: {e}", parent=cadastro_window)
 
-    tk.Label(cadastro_window, text="CPF*").pack(); entry_cpf = tk.Entry(cadastro_window); entry_cpf.pack()
-    tk.Label(cadastro_window, text="Login*").pack(); entry_login_cad = tk.Entry(cadastro_window); entry_login_cad.pack()
-    tk.Label(cadastro_window, text="Nome*").pack(); entry_nome = tk.Entry(cadastro_window); entry_nome.pack()
-    tk.Label(cadastro_window, text="Senha*").pack(); entry_senha_cad = tk.Entry(cadastro_window, show="*"); entry_senha_cad.pack()
-    tk.Label(cadastro_window, text="Bloco").pack(); entry_bloco = tk.Entry(cadastro_window); entry_bloco.pack()
-    tk.Label(cadastro_window, text="Número do AP").pack(); entry_numero_ap = tk.Entry(cadastro_window); entry_numero_ap.pack()
-    tk.Label(cadastro_window, text="Email*").pack(); entry_email = tk.Entry(cadastro_window); entry_email.pack()
-    tk.Label(cadastro_window, text="* Campos obrigatórios").pack(pady=5)
-    tk.Button(cadastro_window, text="Cadastrar", command=cadastrar_pessoa).pack(pady=10)
+    tk.Label(cadastro_window, text="CPF*",
+        bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 9, "bold"),
+        width=7,
+        height=1,
+        pady=4, padx=1# Fonte moderna e compacta
+        ).pack(pady=2, padx=2); entry_cpf = tk.Entry(cadastro_window,
+                            bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",
+                            justify="center",
+                            ); entry_cpf.pack()
+
+    tk.Label(cadastro_window, text="Login*",
+        bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 9, "bold"),
+        width=7,
+        height=1,
+        pady=4, padx=1
+        ).pack(); entry_login_cad = tk.Entry(cadastro_window, bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",justify="center"); entry_login_cad.pack()
+
+    tk.Label(cadastro_window, text="Nome*",
+        bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 9, "bold"),
+        width=7,
+        height=1,
+        pady=4, padx=1).pack(); entry_nome = tk.Entry(cadastro_window, bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",justify="center"); entry_nome.pack()
+
+    tk.Label(cadastro_window, text="Senha*",
+        bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 9, "bold"),
+        width=7,
+        height=1,
+        pady=4, padx=1).pack(); entry_senha_cad = tk.Entry(cadastro_window, show=">", bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",justify="center"); entry_senha_cad.pack()
+
+    tk.Label(cadastro_window, text="Bloco",
+        bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 9, "bold"),
+        width=7,
+        height=1,
+        pady=4, padx=1).pack(); entry_bloco = tk.Entry(cadastro_window, bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",justify="center"); entry_bloco.pack()
+
+    tk.Label(cadastro_window, text="Número do AP",
+        bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 9, "bold"),
+        width=15,
+        height=1,
+        pady=4, padx=1).pack(); entry_numero_ap = tk.Entry(cadastro_window, bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",justify="center"); entry_numero_ap.pack()
+
+    tk.Label(cadastro_window, text="Email*",
+        bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+        fg="light gray",  # Texto branco para contraste
+        font=("Helvetica", 9, "bold"),
+        width=7,
+        height=1,
+        pady=4, padx=1).pack(); entry_email = tk.Entry(cadastro_window, bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",justify="center"); entry_email.pack()
+    tk.Label(cadastro_window, text="* Campos obrigatórios",
+             font=("Arial", 6, "bold"),
+              bg="#001F3F",  # Fundo azul escuro
+              fg="white",  # Texto branco
+              relief="raised",
+              width=16,
+              height=1,
+              pady=5, padx=4, cursor="heart").pack(pady=5)
+    tk.Button(cadastro_window, text="Cadastrar", command=cadastrar_pessoa,
+              font=("Arial", 12, "bold"),
+              bg="#001F3F",  # Fundo azul escuro
+              fg="white",  # Texto branco
+              activebackground="#003366",  # Fundo ao clicar
+              activeforeground="white",  # Texto ao clicar
+              relief="raised",
+              width=10,
+              height=1,
+              pady=4, padx=4, cursor="hand2"
+              ).pack(pady=10)
 
 def mostrar_dados_usuario(dados):
     cpf, nome, bloco, numero_ap, email = dados
@@ -141,15 +323,15 @@ def mostrar_dados_usuario(dados):
         widget.destroy()
 
     root.title(f"Área do Membro - {nome}")
-    root.geometry("750x380")
-    root.configure(bg="#f0f8ff")
+    root.geometry("750x400+300+100")
+    root.configure(bg="black")
 
     # --- Frame Esquerdo (Informações do Usuário) ---
-    left_frame = tk.Frame(root, bg="#f0f8ff", padx=15, pady=10)
+    left_frame = tk.Frame(root, bg="#000F1A", padx=15, pady=10)
     left_frame.pack(side="left", fill="y", expand=False, padx=(10, 5), pady=10)  # fill="y" para ocupar altura
 
-    tk.Label(left_frame, text="Informações do Usuário", font=("Helvetica", 14, "bold"), bg="#f0f8ff").pack(pady=10)
-    info_display_frame = tk.Frame(left_frame, bg="#f0f8ff")
+    tk.Label(left_frame, text="Informações do Usuário", font=("Helvetica", 14, "bold"), bg="#000F1A", fg="white").pack(pady=10)
+    info_display_frame = tk.Frame(left_frame, bg="#000F1A")
     info_display_frame.pack(pady=10, padx=5, fill="x", anchor="n")
 
     for info_text in [
@@ -159,32 +341,36 @@ def mostrar_dados_usuario(dados):
         f"Apartamento: {numero_ap if numero_ap is not None else 'N/A'}",
         f"Email: {email}"
     ]:
-        tk.Label(info_display_frame, text=info_text, anchor="w", justify="left", bg="#f0f8ff",
+        tk.Label(info_display_frame, text=info_text, anchor="w", justify="left", bg="#000F1A", fg="white",
                  font=("Helvetica", 10)).pack(fill="x", pady=3)
 
     # Frame para botões de ação (todos juntos e empilhados)
-    action_frame = tk.Frame(left_frame, bg="#f0f8ff")
+    action_frame = tk.Frame(left_frame, bg="#000F1A")
     # pack normal, sem anchor ou expand, para ficar abaixo das infos
     action_frame.pack(pady=20, fill="x")
 
     # Botão Editar Dados
-    tk.Button(action_frame, text="Editar Meus Dados", command=lambda u_cpf=cpf: editar_dados_usuario(u_cpf)).pack(
+    tk.Button(action_frame, text="Editar Meus Dados", command=lambda u_cpf=cpf: editar_dados_usuario(u_cpf)
+              ,bg="light gray").pack(
         pady=5, fill="x")
 
     # Botão Excluir Conta
-    tk.Button(action_frame, text="Excluir Minha Conta", command=lambda u_cpf=cpf: excluir_conta(u_cpf), fg="red").pack(
+    tk.Button(action_frame, text="Excluir Minha Conta", command=lambda u_cpf=cpf: excluir_conta(u_cpf),
+              fg="red",bg="light gray").pack(
         pady=5, fill="x")
 
     # Botão Logout (agora neste frame também)
-    tk.Button(action_frame, text="Logout", command=reiniciar_para_login).pack(pady=0.1, fill="x")
+    tk.Button(action_frame, text="Logout", command=reiniciar_para_login
+              ,bg="light gray").pack(pady=5, fill="x")
 
     # --- Frame Direito (Carteirinha) ---
-    right_frame = tk.Frame(root, bg="#f0f8ff", padx=10, pady=10)
+    right_frame = tk.Frame(root, bg="#000F1A", padx=10, pady=10)
     right_frame.pack(side="right", fill="both", expand=True, padx=(5, 10), pady=10)
 
-    tk.Label(right_frame, text="Carteirinha do Clube", font=("Helvetica", 14, "bold"), bg="#f0f8ff").pack(pady=10)
+    tk.Label(right_frame, text="Carteirinha do Clube", font=("Helvetica", 14, "bold"),
+             bg="#000F1A", fg="white").pack(pady=10)
 
-    carteirinha_container = tk.Frame(right_frame, bg="#f0f8ff")
+    carteirinha_container = tk.Frame(right_frame, bg="#000F1A")
     carteirinha_container.pack(fill="both", expand=True)
 
     desenhar_carteirinha_no_frame(carteirinha_container, dados)
@@ -198,12 +384,12 @@ def desenhar_carteirinha_no_frame(parent_frame, dados_usuario):
         widget.destroy()
 
 
-    parent_frame.configure(bg="#f0f8ff")  # Fundo da área da carteirinha
+    parent_frame.configure(bg="#000F1A")  # Fundo da área da carteirinha
 
     # Frame principal da carteirinha - simula o cartão físico
     card_width = 400
     card_height = 225
-    card_frame = tk.Frame(parent_frame, bg="#f8f8f0", bd=2, relief="solid", width=card_width, height=card_height)
+    card_frame = tk.Frame(parent_frame, bg="light gray", bd=2, relief="solid", width=card_width, height=card_height)
     # Centraliza o card_frame dentro do parent_frame
     card_frame.pack(pady=15, padx=10, expand=True)
     card_frame.pack_propagate(False)
@@ -211,45 +397,45 @@ def desenhar_carteirinha_no_frame(parent_frame, dados_usuario):
     # ---
     photo_width = 100
     photo_height = 125
-    photo_placeholder_frame = tk.Frame(card_frame, bg="#a0d2db", width=photo_width, height=photo_height)
+    photo_placeholder_frame = tk.Frame(card_frame, bg="#64959e", width=photo_width, height=photo_height)
     photo_placeholder_frame.place(x=20,
                                   y=(card_height - photo_height) // 2 + 10)
     photo_placeholder_frame.pack_propagate(False)
-    tk.Label(photo_placeholder_frame, text="FOTO", font=("Helvetica", 9, "bold"), bg="#a0d2db", fg="#ffffff").pack(
+    tk.Label(photo_placeholder_frame, text="FOTO", font=("Helvetica", 9, "bold"), bg="#64959e", fg="#ffffff").pack(
         expand=True)
 
 
     info_container_x = photo_width + 30
     info_container_width = card_width - info_container_x - 15
-    info_container = tk.Frame(card_frame, bg="#f8f8f0")
+    info_container = tk.Frame(card_frame, bg="light gray")
     info_container.place(x=info_container_x, y=10, width=info_container_width, height=card_height - 20)
 
 
-    club_info_frame = tk.Frame(info_container, bg="#f8f8f0")
+    club_info_frame = tk.Frame(info_container, bg="light gray")
     club_info_frame.pack(anchor="ne", pady=3, padx=3)
-    logo_canvas = tk.Canvas(club_info_frame, width=20, height=20, bg="#f8f8f0", highlightthickness=0)
-    logo_canvas.create_oval(2, 2, 18, 18, fill="#006a71", outline="#006a71")
+    logo_canvas = tk.Canvas(club_info_frame, width=20, height=20, bg="light gray", highlightthickness=0)
+    logo_canvas.create_oval(2, 2, 18, 18, fill="#006a71", outline="light gray")
     logo_canvas.pack(side="left", padx=2)
-    tk.Label(club_info_frame, text="Clube da Vizinhança", font=("Helvetica", 8, "bold"), bg="#f8f8f0", fg="#006a71").pack(
+    tk.Label(club_info_frame, text="Clube da Vizinhança", font=("Helvetica", 8, "bold"), bg="light gray", fg="#006a71").pack(
         side="left")
 
 
-    member_info_frame = tk.Frame(info_container, bg="#f8f8f0")
+    member_info_frame = tk.Frame(info_container, bg="light gray")
     member_info_frame.pack(anchor="w", pady=(15, 5), padx=8)
 
 
     nome_label = tk.Label(member_info_frame, text=nome.upper() if nome else 'NOME INDISPONÍVEL',
-                          font=("Helvetica", 12, "bold"), bg="#f8f8f0", fg="#006a71", anchor="w", justify="left",
+                          font=("Helvetica", 12, "bold"), bg="light gray", fg="#006a71", anchor="w", justify="left",
                           wraplength=info_container_width - 20)  # Ajusta ao container
     nome_label.pack(fill='x')
 
 
     tk.Label(member_info_frame, text=f"CPF: {cpf if cpf else 'N/A'}",
-             font=("Helvetica", 8), bg="#f8f8f0", fg="#333333", anchor="w", justify="left").pack(fill='x', pady=(6, 1))
+             font=("Helvetica", 8), bg="light gray", fg="#333333", anchor="w", justify="left").pack(fill='x', pady=(6, 1))
     bloco_str = f"Bloco: {bloco}" if bloco else "Bloco: N/A"
     ap_str = f"Apto: {numero_ap}" if numero_ap else "Apto: N/A"
     tk.Label(member_info_frame, text=f"{bloco_str} / {ap_str}",
-             font=("Helvetica", 8), bg="#f8f8f0", fg="#333333", anchor="w", justify="left").pack(fill='x', pady=1)
+             font=("Helvetica", 8), bg="light gray", fg="#333333", anchor="w", justify="left").pack(fill='x', pady=1)
 
 
     bottom_border_height = 18
@@ -275,23 +461,127 @@ def editar_dados_usuario(cpf):
 
     editar_window = tk.Toplevel(root)
     editar_window.title("Editar Meus Dados")
-    editar_window.geometry("350x450")
+    editar_window.geometry("350x450+500+100")
+    editar_window.configure(bg="#000F1A")
     editar_window.transient(root)
     editar_window.grab_set()
 
-    tk.Label(editar_window, text="Nome*").pack()
-    entry_nome_edit = tk.Entry(editar_window); entry_nome_edit.insert(0, nome_atual); entry_nome_edit.pack()
-    tk.Label(editar_window, text="Email*").pack()
-    entry_email_edit = tk.Entry(editar_window); entry_email_edit.insert(0, email_atual); entry_email_edit.pack()
-    tk.Label(editar_window, text="Bloco").pack()
-    entry_bloco_edit = tk.Entry(editar_window); entry_bloco_edit.insert(0, str(bloco_atual) if bloco_atual else ""); entry_bloco_edit.pack()
-    tk.Label(editar_window, text="Número do AP").pack()
-    entry_numero_ap_edit = tk.Entry(editar_window); entry_numero_ap_edit.insert(0, str(numero_ap_atual) if numero_ap_atual else ""); entry_numero_ap_edit.pack()
-    tk.Label(editar_window, text="Nova Senha (deixe em branco para não alterar)").pack()
-    entry_senha_edit = tk.Entry(editar_window, show="*"); entry_senha_edit.pack()
-    tk.Label(editar_window, text="Confirmar Nova Senha").pack()
-    entry_confirma_senha_edit = tk.Entry(editar_window, show="*"); entry_confirma_senha_edit.pack()
-    tk.Label(editar_window, text="* Campos obrigatórios").pack(pady=5)
+    tk.Label(editar_window, text="Nome*",
+             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+             fg="light gray",  # Texto branco para contraste
+             font=("Helvetica", 9, "bold"),
+             width=7,
+             height=1,
+             pady=4, padx=1
+             ).pack()
+    entry_nome_edit = tk.Entry(editar_window,
+                            bg="light gray",
+                           fg="black",
+                           relief="flat",
+                           highlightbackground="#001427",
+                           highlightcolor="#00ADB5",
+                           highlightthickness=2,
+                           insertbackground="black",
+                            justify="center",
+                            ); entry_nome_edit.insert(0, nome_atual); entry_nome_edit.pack()
+    tk.Label(editar_window, text="Email*",
+             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+             fg="light gray",  # Texto branco para contraste
+             font=("Helvetica", 9, "bold"),
+             width=7,
+             height=1,
+             pady=4, padx=1
+             ).pack()
+    entry_email_edit = tk.Entry(editar_window,
+                                bg="light gray",
+                                fg="black",
+                                relief="flat",
+                                highlightbackground="#001427",
+                                highlightcolor="#00ADB5",
+                                highlightthickness=2,
+                                insertbackground="black",
+                                justify="center",
+                                ); entry_email_edit.insert(0, email_atual); entry_email_edit.pack()
+    tk.Label(editar_window, text="Bloco",
+             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+             fg="light gray",  # Texto branco para contraste
+             font=("Helvetica", 9, "bold"),
+             width=7,
+             height=1,
+             pady=4, padx=1
+             ).pack()
+    entry_bloco_edit = tk.Entry(editar_window,
+                                bg="light gray",
+                                fg="black",
+                                relief="flat",
+                                highlightbackground="#001427",
+                                highlightcolor="#00ADB5",
+                                highlightthickness=2,
+                                insertbackground="black",
+                                justify="center",
+                                ); entry_bloco_edit.insert(0, str(bloco_atual) if bloco_atual else ""); entry_bloco_edit.pack()
+    tk.Label(editar_window, text="Número do AP",
+             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+             fg="light gray",  # Texto branco para contraste
+             font=("Helvetica", 9, "bold"),
+             width=17,
+             height=1,
+             pady=4, padx=1
+             ).pack()
+    entry_numero_ap_edit = tk.Entry(editar_window,
+                                    bg="light gray",
+                                    fg="black",
+                                    relief="flat",
+                                    highlightbackground="#001427",
+                                    highlightcolor="#00ADB5",
+                                    highlightthickness=2,
+                                    insertbackground="black",
+                                    justify="center",
+                                    ); entry_numero_ap_edit.insert(0, str(numero_ap_atual) if numero_ap_atual else ""); entry_numero_ap_edit.pack()
+    tk.Label(editar_window, text="Nova Senha (deixe em branco para não alterar)",
+             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+             fg="light gray",  # Texto branco para contraste
+             font=("Helvetica", 9, "bold"),
+             width=37,
+             height=1,
+             pady=4, padx=1
+             ).pack()
+    entry_senha_edit = tk.Entry(editar_window, show=">",
+                                bg="light gray",
+                                fg="black",
+                                relief="flat",
+                                highlightbackground="#001427",
+                                highlightcolor="#00ADB5",
+                                highlightthickness=2,
+                                insertbackground="black",
+                                justify="center",
+                                ); entry_senha_edit.pack()
+    tk.Label(editar_window, text="Confirmar Nova Senha",
+             bg="#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+             fg="light gray",  # Texto branco para contraste
+             font=("Helvetica", 9, "bold"),
+             width=27,
+             height=1,
+             pady=4, padx=1
+             ).pack()
+    entry_confirma_senha_edit = tk.Entry(editar_window, show=">",
+                                         bg="light gray",
+                                         fg="black",
+                                         relief="flat",
+                                         highlightbackground="#001427",
+                                         highlightcolor="#00ADB5",
+                                         highlightthickness=2,
+                                         insertbackground="black",
+                                         justify="center",
+                                         ); entry_confirma_senha_edit.pack()
+    tk.Label(editar_window, text="* Campos obrigatórios",
+    bg = "#000F1A",  # Azul escuro bonito (ou mantenha "gray" se preferir)
+    fg = "light gray",  # Texto branco para contraste
+    font = ("Helvetica", 9, "bold"),
+    width = 27,
+    height = 1,
+    pady = 4, padx = 1
+    ).pack(pady=5)
 
     def salvar_edicao():
         novo_nome = entry_nome_edit.get().strip()
@@ -341,7 +631,17 @@ def editar_dados_usuario(cpf):
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao atualizar: {e}", parent=editar_window)
 
-    tk.Button(editar_window, text="Salvar Alterações", command=salvar_edicao).pack(pady=10)
+    tk.Button(editar_window, text="Salvar Alterações", command=salvar_edicao,
+              font=("Arial", 9, "bold"),
+              bg="#001F3F",  # Fundo azul escuro
+              fg="white",  # Texto branco
+              activebackground="#003366",  # Fundo ao clicar
+              activeforeground="white",  # Texto ao clicar
+              relief="raised",
+              width=15,
+              height=1,
+              pady=4, padx=4, cursor="hand2"
+              ).pack(pady=10)
 
 def excluir_conta(cpf):
     if not messagebox.askyesno("Excluir Conta", "Tem certeza que deseja excluir sua conta?\nEsta ação é irreversível.", icon='warning'):
